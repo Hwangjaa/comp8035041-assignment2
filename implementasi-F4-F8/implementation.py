@@ -1,4 +1,3 @@
-"""Pemilihan threshold dan evaluasi model untuk fitur F4-F8."""
 from datetime import datetime
 from fractions import Fraction
 import numpy as np

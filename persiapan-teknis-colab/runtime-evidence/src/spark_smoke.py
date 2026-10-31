@@ -7,7 +7,6 @@ try:
     s.sparkContext.setLogLevel('ERROR')
     df=s.read.option('header',True).option('encoding','ISO-8859-1').option('inferSchema',False).option('mode','FAILFAST').csv('/content/DataCoSupplyChainDataset.csv')
     n=df.count(); assert n==180519 and len(df.columns)==53
-    # Order keys dibaca lewat Python worker.
     keys=df.select('Order Id').limit(10).rdd.map(lambda row: row[0]).collect()
     assert len(keys)==10 and all(k is not None for k in keys)
     j=s.sparkContext._jvm

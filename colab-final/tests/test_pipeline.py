@@ -1,4 +1,3 @@
-"""Kontrak fitur dan metode pipeline Colab."""
 import unittest
 import sys
 from pathlib import Path

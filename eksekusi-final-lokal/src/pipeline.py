@@ -1,4 +1,3 @@
-"""Pipeline prediksi risiko keterlambatan pesanan DataCo (sklearn + Spark lokal)."""
 import os
 os.environ.setdefault('MPLCONFIGDIR',os.path.join(os.environ.get('TMPDIR','.'),'dataco-mpl'))
 import json, sys, hashlib, platform, subprocess, traceback, logging
@@ -125,7 +124,6 @@ def run(root,out):
         dump(out/'feature-contract.json',{'vocabulary':enc.vocab,'feature_names':enc.names,'n_features':len(enc.names),'fit_partition':'train','fit_order_ids_sha256':hashlib.sha256(json.dumps(enc.fit_order_ids).encode()).hexdigest(),'shape':{p:list(x.shape) for p,x in X.items()},'forbidden_predictors_present':False,'numeric_units':'original; no scaling/log','source_columns':config['feature_groups']})
         assert X['train'].shape[1]==len(enc.names) and all(x.shape[1]==len(enc.names) for x in X.values())
         logging.info('B: order dan fitur selesai: %s; ukuran %s',audit,{p:x.shape for p,x in X.items()})
-        # Semua fit hanya training; prediksi test belum dihitung sebelum threshold dibekukan.
         lr=LogisticRegression(C=1.,solver='lbfgs',max_iter=1000,tol=1e-6,random_state=42,class_weight=None,l1_ratio=0.0)
         lr.fit(X['train'],y['train']);assert lr.classes_.tolist()==[0,1]
         prior=DummyClassifier(strategy='prior',random_state=42).fit(X['train'],y['train'])
@@ -166,7 +164,6 @@ def run(root,out):
         dump(out/'metrics.json',metrics);pd.DataFrame(metrics).to_csv(out/'metrics.csv',index=False)
         dump(out/'convergence.json',{'sklearn_iterations':lr.n_iter_.tolist(),'sklearn_max_iter':1000,'spark_iterations':sm.summary.totalIterations,'spark_objective_history':sm.summary.objectiveHistory})
         logging.info('C: training dan evaluasi selesai; metrics.json tersimpan')
-        # Edge dibentuk dari data item aktual menggunakan Spark DataFrame.
         graph_rows=[(int(a),'MISSING' if pd.isna(b) else str(int(b))) for a,b in zip(items['Order Id'],items['Category Id'])]
         gs=spark.createDataFrame(graph_rows,['order_id','category_id'])
         edges=gs.select('order_id','category_id').distinct().orderBy('order_id','category_id')
