@@ -1,0 +1,23 @@
+{
+  "source": "https://data.mendeley.com/datasets/8gx2fvg2k6/5",
+  "files": [
+    {
+      "file": "/Users/rafaelyudianto/Documents/COMP8035041-Assignment-II/data/raw/DataCoSupplyChainDataset.csv",
+      "bytes": 95910149,
+      "sha256": "fa6d022ed437155e1a2f0378710602848703c8a7f203f7ff5d77805bf8480aa6",
+      "verified": true
+    },
+    {
+      "file": "/Users/rafaelyudianto/Documents/COMP8035041-Assignment-II/data/raw/DescriptionDataCoSupplyChain.csv",
+      "bytes": 3444,
+      "sha256": "9828e34669bd6d77e3b4463364cc44a5d52446b5e246fc258758cfe592566c4b",
+      "verified": true
+    },
+    {
+      "file": "/Users/rafaelyudianto/Documents/COMP8035041-Assignment-II/data/raw/tokenized_access_logs.csv",
+      "bytes": 95446364,
+      "sha256": "7a4372df63a1e87f5add68bc036bb6064db09069998f25a679aec39f1a8d7765",
+      "verified": true
+    }
+  ]
+}

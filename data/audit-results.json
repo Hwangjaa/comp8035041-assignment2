@@ -1,0 +1,68 @@
+{
+  "transaction_rows": 180519,
+  "transaction_columns": 53,
+  "unique_item_ids": 180519,
+  "unique_order_ids": 65752,
+  "scope_rows": 172765,
+  "scope_order_ids": 62897,
+  "cancelled_rows": 7754,
+  "scope_labels": {
+    "0": 73788,
+    "1": 98977
+  },
+  "transaction_duplicate_rows": 0,
+  "order_date_min": "2015-01-01 00:00:00",
+  "order_date_max": "2018-01-31 23:38:00",
+  "invalid_dates": 0,
+  "duration_exact_match_rows": 170782,
+  "noncancelled_label_vs_duration_mismatch_rows": 0,
+  "orders_with_inconsistent_label_or_timestamps": 0,
+  "empty_product_description_rows": 180519,
+  "clickstream_rows": 469977,
+  "clickstream_columns": [
+    "Product",
+    "Category",
+    "Date",
+    "Month",
+    "Hour",
+    "Department",
+    "ip",
+    "url"
+  ],
+  "clickstream_duplicate_rows": 3249,
+  "clickstream_empty_cells": 0,
+  "clickstream_date_samples": [
+    "9/1/2017 6:00",
+    "9/1/2017 6:00",
+    "9/1/2017 6:00"
+  ],
+  "clickstream_date_min_lexical": "1/1/2018 10:00",
+  "clickstream_date_max_lexical": "9/9/2017 9:59",
+  "files": [
+    {
+      "file": "DataCoSupplyChainDataset.csv",
+      "bytes": 95910149,
+      "sha256": "fa6d022ed437155e1a2f0378710602848703c8a7f203f7ff5d77805bf8480aa6"
+    },
+    {
+      "file": "DescriptionDataCoSupplyChain.csv",
+      "bytes": 3444,
+      "sha256": "9828e34669bd6d77e3b4463364cc44a5d52446b5e246fc258758cfe592566c4b"
+    },
+    {
+      "file": "tokenized_access_logs.csv",
+      "bytes": 95446364,
+      "sha256": "7a4372df63a1e87f5add68bc036bb6064db09069998f25a679aec39f1a8d7765"
+    }
+  ],
+  "clean_columns": 50,
+  "clickstream_date_min": "2017-09-01 06:00:00",
+  "clickstream_date_max": "2018-01-31 23:58:00",
+  "duration_floor_match_rows": 175862,
+  "duration_difference_days": {
+    "0.0": 170782,
+    "0.5": 5080,
+    "-0.5": 4657
+  },
+  "late_percentage": 57.28996035076549
+}
