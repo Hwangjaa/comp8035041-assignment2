@@ -1,4 +1,4 @@
-"""Fixture kecil hanya untuk unit test; bukan hasil eksperimen."""
+"""Kontrak fitur dan metode pipeline."""
 import unittest
 import sys
 from pathlib import Path

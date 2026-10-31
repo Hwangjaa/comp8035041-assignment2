@@ -1,4 +1,4 @@
-"""Eksekusi keputusan mahasiswa COMP8035041. Tidak membuat interpretasi akademik."""
+"""Pipeline prediksi risiko keterlambatan pesanan DataCo (sklearn + Spark lokal)."""
 import os
 os.environ.setdefault('MPLCONFIGDIR',os.path.join(os.environ.get('TMPDIR','.'),'dataco-mpl'))
 import json, sys, hashlib, platform, subprocess, traceback, logging
@@ -97,7 +97,7 @@ def run(root,out):
     root=Path(root).resolve();out=Path(out).resolve();out.mkdir(parents=True,exist_ok=True)
     logging.basicConfig(level=logging.INFO,format='%(asctime)s %(levelname)s %(message)s',handlers=[logging.FileHandler(out/'execution.log'),logging.StreamHandler(sys.stdout)],force=True)
     started=datetime.now(timezone.utc).isoformat()
-    config={'started_utc':started,'seed':42,'split':{'train':'order_date < 2017-07-01','validation':'2017-07-01 <= order_date < 2017-10-01','test':'order_date >= 2017-10-01'},'gap':'M0: none; label maturation unknown','benchmark':'B0: not performed','feature_groups':['Days for shipment (scheduled)','Customer Segment','Market','Category Id multi-hot','unique Order Item Id count'],'threshold':'H1 validation binary F1 maximum; ties largest; >=; all-negative candidate included','refit':False,'storage':'local file:///; not HDFS','origin':'Implementasi MASTER EXECUTION DIRECTIVE mahasiswa; metode tidak dipilih ulang'}
+    config={'started_utc':started,'seed':42,'split':{'train':'order_date < 2017-07-01','validation':'2017-07-01 <= order_date < 2017-10-01','test':'order_date >= 2017-10-01'},'gap':'none; label maturation unknown','benchmark':'not performed','feature_groups':['Days for shipment (scheduled)','Customer Segment','Market','Category Id multi-hot','unique Order Item Id count'],'threshold':'validation binary F1 maximum; ties largest; >=; all-negative candidate included','refit':False,'storage':'local file:///; not HDFS'}
     dump(out/'config.json',config)
     try:
         logging.info('A: audit sumber dan environment')
@@ -194,7 +194,7 @@ def run(root,out):
         nx.draw_networkx_nodes(view,pos,nodelist=selected,node_size=12,node_color='#6aaed6',ax=ax)
         nx.draw_networkx_nodes(view,pos,nodelist=top,node_size=250,node_color='#f4a340',ax=ax)
         nx.draw_networkx_labels(view,pos,labels={c:c for c in top},font_size=8,ax=ax)
-        ax.set_title('Subset tampilan: 10 kategori degree tertinggi; maksimal 200 order\nBukan statistik graph lengkap');ax.axis('off');fig.tight_layout();fig.savefig(out/'graph-subset.png',dpi=180);plt.close(fig)
+        ax.set_title('Subset: 10 kategori degree tertinggi, maksimal 200 order');ax.axis('off');fig.tight_layout();fig.savefig(out/'graph-subset.png',dpi=180);plt.close(fig)
         summary={'nodes':g.number_of_nodes(),'orders':len(orders),'categories':len(degree),'edges':g.number_of_edges(),'connected_components':len(components),'self_loops':nx.number_of_selfloops(g),'duplicate_edges':int(ep[['order_id','category_id']].duplicated().sum()),'missing_category_items':audit['missing_category_items'],'edge_construction':'Spark DataFrame distinct; full retained cohort','metric_engine':'NetworkX; single-machine','visualization':{'categories':len(top),'orders':len(selected),'nodes':view.number_of_nodes(),'edges':view.number_of_edges(),'selection':'top-10 degree descending, Category Id ascending ties; neighboring Order Id ascending first 200','seed':42,'iterations':50},'source_sha256':data_manifest[0]['sha256']}
         assert summary['nodes']==summary['orders']+summary['categories'] and sum(degree.degree)==summary['edges'] and sum(x['nodes'] for x in cr)==summary['nodes']
         dump(out/'graph-summary.json',summary)

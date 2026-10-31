@@ -14,7 +14,6 @@ class EvaluatorTest(unittest.TestCase):
         import implementation as m
         import numpy as np
         from sklearn.metrics import f1_score
-        # Data uji unit saja, bukan hasil eksperimen atau benchmark.
         y = np.array([1, 0, 1, 0, 1, 0])
         p = np.array([0.9, 0.8, 0.6, 0.6, 0.3, 0.1])
         candidates = list(np.unique(p)) + [np.nextafter(p.max(), np.inf)]

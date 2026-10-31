@@ -1,1 +1,1 @@
-"""Implementasi final Assignment II COMP8035041."""
+"""Modul pipeline Colab."""
