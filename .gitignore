@@ -1,3 +1,62 @@
+# Standard Python & OS ignores
 __pycache__/
 *.pyc
 .DS_Store
+.venv/
+
+# Intermediate JSON files
+*.json
+
+# Temporary & intermediate revision scripts
+apply_*.py
+fix_*.py
+test_*.py
+diag_*.py
+rebuild_*.py
+reconstruct*.py
+toc_*.py
+audit_*.py
+classify_*.py
+clean_*.py
+clear_*.py
+dedup_*.py
+extract_*.py
+insert_*.py
+map_*.py
+regen_*.py
+resolve_*.py
+scan_*.py
+split_*.py
+swap_*.py
+sync_*.py
+update_*.py
+verify_*.py
+generate_*.py
+ppt_*.py
+check_*.py
+debug_*.py
+merge_*.py
+build_*.py
+remove_*.py
+
+# Intermediate test and backup documents
+.pre-*
+test_*
+Assignment-II-DataCo-Final-*
+Assignment-II-DataCo-Laporan-*
+*.pre-*
+*.backup.docx
+*-temp.docx
+assignment2-*
+LAPORAN-*
+RINGKASAN-*
+*.ipynb_checkpoints
+Presentasi-Assignment-II-DataCo.pptx
+
+# Temporary image artifacts (preserve key project figures)
+*.png
+!gambar_7_1_dashboard.png
+!gambar_7_2_insights.png
+!dashboard_full.png
+!extracted_signature.png
+*.jpg
