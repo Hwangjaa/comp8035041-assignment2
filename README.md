@@ -1,4 +1,4 @@
-# COMP8035041 Big Data Analytics — DataCo Smart Supply Chain Predictive Analytics & Interactive Dashboard
+# COMP8035041 Big Data Analytics: DataCo Smart Supply Chain Predictive Analytics & Interactive Dashboard
 
 Repository ini memuat seluruh artefak teknis dan laporan resmi untuk **Assignment II & Final Project** mata kuliah *COMP8035041 – Big Data Analytics* (BINUS Graduate Program, Magister Teknik Informatika) oleh **Rafael Yudianto (NIM: 2702752495)**.
 
@@ -28,9 +28,9 @@ Dashboard visualisasi analitik (Bab 7) dibangun secara mandiri (*standalone web 
 ### Fitur Utama & Tiga Wawasan Bisnis (*Insights*) Dashboard:
 1. **Interactive Scenario Controls**: Slider ambang batas keputusan risiko (0,40–0,85) dinamis serta filter wilayah pasar (*Market*) dan moda pengiriman (*Shipping Mode*).
 2. **KPI Scorecards**: Ringkasan volume pesanan uji (8.043 pesanan), jumlah antrean risiko kritis terdeteksi, skor performa model (*Average Precision* 0,7364), dan skala jaringan graf (62.948 simpul).
-3. **Insight 1 (Machine Learning — Antrean Prioritas Gudang)**: Histogram distribusi probabilitas risiko model Spark MLlib dan tabel interaktif *Live Dispatch Queue* (Top-K Alert). Memprioritaskan pesanan kritis darurat setiap awal shift kerja dengan presisi mencapai **78,9%**, mencegah denda penalti pelanggaran SLA dan melindungi barang bernilai tinggi.
-4. **Insight 2 (Graph Analytics — Penataan Ulang Rak Gudang / *Reslotting*)**: Pemetaan graf bipartit pesanan-kategori produk mengidentifikasi simpul penghubung raksasa (*network hubs*) berketerlambatan tinggi >57,6% (Cleats, Men's Footwear, Women's Apparel). Panduan rekomendasi: penataan ulang slot rak gudang (*warehouse reslotting*) di area *Fast-Moving Staging Zone* dekat meja pengepakan (*packing station*), memangkas *picking cycle time* hingga 30%.
-5. **Insight 3 (Business & Operations Policy — Kalibrasi SLA Realistis)**: Mengungkap paradoks operasional bahwa moda pengiriman dengan janji durasi paling agresif (*Same Day* jadwal 0 hari dan *First Class* jadwal 1 hari) justru memiliki rata-rata skor keterlambatan tertinggi (0,8647 dan 0,7931). Rekomendasi bisnis: penetapan batas waktu pesanan (*order cutoff time*) pukul 11:00 dan penambahan toleransi estimasi +1 hari pada destinasi transit kepulauan.
+3. **Insight 1 (Machine Learning: Antrean Prioritas Gudang)**: Histogram distribusi probabilitas risiko model Spark MLlib dan tabel interaktif *Live Dispatch Queue* (Top-K Alert). Memprioritaskan pesanan kritis darurat setiap awal shift kerja dengan presisi mencapai **78,9%**, mencegah denda penalti pelanggaran SLA dan melindungi barang bernilai tinggi.
+4. **Insight 2 (Graph Analytics: Penataan Ulang Rak Gudang / *Reslotting*)**: Pemetaan graf bipartit pesanan-kategori produk mengidentifikasi simpul penghubung raksasa (*network hubs*) berketerlambatan tinggi >57,6% (Cleats, Men's Footwear, Women's Apparel). Panduan rekomendasi: penataan ulang slot rak gudang (*warehouse reslotting*) di area *Fast-Moving Staging Zone* dekat meja pengepakan (*packing station*), memangkas *picking cycle time* hingga 30%.
+5. **Insight 3 (Business & Operations Policy: Kalibrasi SLA Realistis)**: Mengungkap paradoks operasional bahwa moda pengiriman dengan janji durasi paling agresif (*Same Day* jadwal 0 hari dan *First Class* jadwal 1 hari) justru memiliki rata-rata skor keterlambatan tertinggi (0,8647 dan 0,7931). Rekomendasi bisnis: penetapan batas waktu pesanan (*order cutoff time*) pukul 11:00 dan penambahan toleransi estimasi +1 hari pada destinasi transit kepulauan.
 
 ---
 
@@ -38,10 +38,11 @@ Dashboard visualisasi analitik (Bab 7) dibangun secara mandiri (*standalone web 
 
 ```
 .
-├── Assignment-II-DataCo-Revisi-Bahasa.pdf    Dokumen PDF Resmi Final Project (Bab 1–7, 36 halaman, bertanda tangan)
+├── Assignment-II-DataCo-Revisi-Bahasa.pdf    Dokumen PDF Resmi Final Project (Bab 1–7, 35 halaman, bertanda tangan)
 ├── Assignment-II-DataCo-Revisi-Bahasa.docx   Dokumen Word Resmi Final Project (Bab 1–7, terjustifikasi rapi)
 ├── Presentasi-Assignment-II-RafaelYudianto.pdf   Slide Presentasi Eksekutif (PDF)
 ├── Presentasi-Assignment-II-RafaelYudianto.pptx  Slide Presentasi Eksekutif (PPTX)
+├── Video-Presentasi (Google Drive)           Rekaman Presentasi Eksekutif: https://drive.google.com/file/d/1e2FDjQU0OV1jx7MbpyBYONgsRu-6j0tB/view?usp=sharing
 ├── README.md                                 Dokumentasi proyek dan panduan eksekusi
 │
 ├── dashboard/                                Direktori Utama Dashboard Visualisasi (Bab 7)
@@ -92,11 +93,11 @@ Dashboard visualisasi analitik (Bab 7) dibangun secara mandiri (*standalone web 
 
 - **Target Prediksi**: `Late_delivery_risk` (0 = tepat waktu, 1 = berisiko terlambat).
 - **Kelompok Fitur Model**:
-  - **F4**: *Days for shipment (scheduled)* — durasi janji pengiriman terjadwal.
-  - **F5**: *Customer Segment* — segmen konsumen (Consumer, Corporate, Home Office).
-  - **F6**: *Market* — kawasan pasar geografis (Europe, Pacific Asia, LATAM, dll.).
-  - **F7**: *Category Id* (*multi-hot encoding*) — representasi biner multi-kategori belanja per pesanan.
-  - **F8**: *Order Item Id Count* — total baris item pesanan unik.
+  - **F4**: *Days for shipment (scheduled)*: durasi janji pengiriman terjadwal.
+  - **F5**: *Customer Segment*: segmen konsumen (Consumer, Corporate, Home Office).
+  - **F6**: *Market*: kawasan pasar geografis (Europe, Pacific Asia, LATAM, dll.).
+  - **F7**: *Category Id* (*multi-hot encoding*): representasi biner multi-kategori belanja per pesanan.
+  - **F8**: *Order Item Id Count*: total baris item pesanan unik.
 - **Pemisahan Temporal (*Temporal Split*)**:
   - *Train*: `order_date` < 2017-07-01 (47.749 pesanan; 21.302 tepat waktu, 28.524 terlambat)
   - *Validation*: 2017-07-01 ≤ `order_date` < 2017-10-01 (7.105 pesanan; 2.140 tepat waktu, 2.888 terlambat)
