@@ -7763,3 +7763,4 @@ const DASHBOARD_DATA = {
     }
   ]
 };
+window.DASHBOARD_DATA = DASHBOARD_DATA;
