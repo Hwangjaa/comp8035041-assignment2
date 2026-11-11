@@ -2,7 +2,7 @@
 
 Repository ini memuat seluruh artefak teknis dan laporan resmi untuk **Assignment II & Final Project** mata kuliah *COMP8035041 – Big Data Analytics* (BINUS Graduate Program, Magister Teknik Informatika) oleh **Rafael Yudianto (NIM: 2702752495)**.
 
-Proyek ini mencakup pemrosesan data skala besar (*Big Data*), pemodelan prediktif risiko keterlambatan pengiriman (*Late Delivery Risk*) menggunakan Apache Spark MLlib dan scikit-learn, eksplorasi topologi jaringan produk belanja (*Graph Analytics*), serta instrumen pendukung keputusan operasional rantai pasok berbasis web interaktif (*Visualisasi Berupa Dashboard*).
+Proyek ini mencakup pemrosesan data skala besar (*Big Data*), pemodelan prediktif risiko keterlambatan pengiriman (*Late Delivery Risk*) menggunakan Apache Spark MLlib dan scikit-learn, eksplorasi topologi jaringan produk belanja (*Graph Analytics*), serta instrumen pendukung keputusan operasional rantai pasok berbasis web interaktif (*Visualisasi Dashboard*).
 
 ---
 
