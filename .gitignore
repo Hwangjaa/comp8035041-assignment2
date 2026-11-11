@@ -61,3 +61,7 @@ Presentasi-Assignment-II-DataCo.pptx
 !extracted_signature.png
 *.jpg
 compile_*.py
+.agents/
+anti-slop/
+independent_*.py
+challenger_*.py

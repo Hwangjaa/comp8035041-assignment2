@@ -3,223 +3,231 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataCo Supply Chain - Big Data Intelligence Dashboard | Rafael Yudianto (2702752495)</title>
+  <title>DataCo Supply Chain: Big Data Intelligence Dashboard | Rafael Yudianto (2702752495)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Plotly.js CDN -->
   <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; }
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
-    .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    .font-tabular { font-variant-numeric: tabular-nums; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
   </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen">
+<body class="bg-slate-50 text-slate-900 min-h-screen antialiased flex flex-col justify-between">
 
-  <!-- Top Header / Navigation -->
-  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+  <!-- Loading State Indicator (R-27) -->
+  <div id="loadingState" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-50 transition-opacity duration-200">
+    <div class="flex flex-col items-center gap-3 p-6 bg-white border border-slate-200 rounded-lg shadow-sm">
+      <div class="w-8 h-8 border-3 border-slate-300 border-t-slate-900 rounded-full animate-spin"></div>
+      <p class="text-xs font-semibold text-slate-700">Memuat Sistem Analitik DataCo...</p>
+    </div>
+  </div>
+
+  <!-- Error State Overlay (R-27) -->
+  <div id="errorState" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4">
+    <div class="max-w-md w-full bg-white border border-rose-200 rounded-lg p-6 shadow-lg space-y-3">
+      <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+        <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+        </svg>
+        <span>Kegagalan Inisialisasi Sistem</span>
+      </div>
+      <p id="errorMessage" class="text-xs text-slate-600 leading-relaxed">
+        Terjadi kendala saat memuat berkas konfigurasi analitik.
+      </p>
+      <button onclick="window.location.reload()" class="w-full py-2 bg-slate-900 text-white text-xs font-semibold rounded hover:bg-slate-800 transition">
+        Muat Ulang Halaman
+      </button>
+    </div>
+  </div>
+
+  <!-- Header / Navigation Bar (R-09, R-25, R-39) -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <div>
-        <div class="flex items-center gap-2">
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-500/20 text-blue-400 border border-blue-500/30">
-            COMP8035041 Big Data Analytics
-          </span>
-          <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-            Final Project • Interactive Dashboard
-          </span>
+        <div class="flex items-center gap-2 text-xs text-slate-400 font-medium">
+          <span>COMP8035041 Big Data Analytics</span>
+          <span class="text-slate-600">•</span>
+          <span class="text-slate-300">Final Decision Dashboard</span>
         </div>
-        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white mt-1">
+        <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white mt-0.5">
           DataCo Supply Chain Risk & Network Intelligence
         </h1>
-        <p class="text-xs sm:text-sm text-slate-400">
-          Executive Decision Support: Machine Learning Prioritization & Graph Analytics Bottleneck Detection
+        <p class="text-xs text-slate-400">
+          Prioritisasi Risiko Pengiriman PySpark MLlib & Deteksi Hambatan Graf Bipartit
         </p>
       </div>
 
-      <div class="flex items-center gap-4 bg-slate-800/80 px-4 py-2.5 rounded-xl border border-slate-700/80">
-        <div class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow">
+      <div class="flex items-center gap-3 bg-slate-800/90 px-3.5 py-2 rounded-lg border border-slate-700">
+        <div class="w-8 h-8 rounded bg-slate-700 text-slate-100 flex items-center justify-center font-bold text-xs" aria-hidden="true">
           RY
         </div>
         <div class="text-left text-xs">
-          <p class="font-bold text-white text-sm">Rafael Yudianto</p>
-          <p class="text-slate-300">NIM: <span class="font-mono text-blue-400 font-semibold">2702752495</span></p>
-          <p class="text-slate-400 text-[11px]">Magister Teknik Informatika – BINUS</p>
+          <p class="font-bold text-white leading-tight">Rafael Yudianto</p>
+          <p class="text-slate-400 text-[11px]">NIM: <span class="font-mono text-slate-200">2702752495</span> (MTI BINUS)</p>
         </div>
       </div>
     </div>
   </header>
 
-  <!-- Main Container -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+  <!-- Main Content Container -->
+  <main id="dashboardRoot" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 flex-1 w-full opacity-0 transition-opacity duration-300">
 
-    <!-- Global Interactive Control Bar -->
-    <div class="bg-white rounded-2xl p-4 sm:p-5 shadow-sm border border-slate-200">
+    <!-- Scenario Controls & Filters (R-32, R-39) -->
+    <section aria-labelledby="controlsHeading" class="bg-white rounded-lg p-4 sm:p-5 border border-slate-200">
       <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div>
-          <h2 class="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-            Interactive Scenario Controls
+          <h2 id="controlsHeading" class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+            <svg class="w-4 h-4 text-slate-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+            </svg>
+            Kontrol Parameter Skenario Operasional
           </h2>
-          <p class="text-xs text-slate-500 mt-0.5">Filter data secara dinamis untuk menguji simulasi keputusan operasional harian.</p>
+          <p class="text-xs text-slate-500 mt-0.5">Filter data dinamis untuk menguji batas keputusan armada dan jadwal harian.</p>
         </div>
 
-        <!-- Filter Controls -->
+        <!-- Filter Selectors -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full lg:w-auto">
           <!-- Market Filter -->
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Market Region</label>
-            <select id="filterMarket" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
-              <option value="ALL">Semua Market (Europe & Pacific Asia)</option>
-              <option value="Pacific Asia">Pacific Asia (5.380 Orders)</option>
-              <option value="Europe">Europe (2.663 Orders)</option>
+            <label for="filterMarket" class="block text-xs font-semibold text-slate-700 mb-1">Wilayah Pasar</label>
+            <select id="filterMarket" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
+              <option value="ALL">Semua Pasar (Europe & Pacific Asia)</option>
+              <option value="Pacific Asia">Pacific Asia (5.380 Pesanan)</option>
+              <option value="Europe">Europe (2.663 Pesanan)</option>
             </select>
           </div>
 
           <!-- Shipping Mode Filter -->
           <div>
-            <label class="block text-xs font-semibold text-slate-600 mb-1">Shipping Mode</label>
-            <select id="filterShippingMode" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label for="filterShippingMode" class="block text-xs font-semibold text-slate-700 mb-1">Mode Pengiriman</label>
+            <select id="filterShippingMode" class="w-full text-xs font-medium bg-slate-50 border border-slate-300 rounded-md px-3 py-2 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
               <option value="ALL">Semua Mode Pengiriman</option>
-              <option value="Same Day">Same Day (Scheduled: 0 hari)</option>
-              <option value="First Class">First Class (Scheduled: 1 hari)</option>
-              <option value="Second Class">Second Class (Scheduled: 2 hari)</option>
-              <option value="Standard Class">Standard Class (Scheduled: 4 hari)</option>
+              <option value="Same Day">Same Day (Jadwal: 0 hari)</option>
+              <option value="First Class">First Class (Jadwal: 1 hari)</option>
+              <option value="Second Class">Second Class (Jadwal: 2 hari)</option>
+              <option value="Standard Class">Standard Class (Jadwal: 4 hari)</option>
             </select>
           </div>
 
-          <!-- Threshold Slider -->
+          <!-- Decision Threshold Slider -->
           <div>
             <div class="flex justify-between items-center mb-1">
-              <label class="text-xs font-semibold text-slate-600">Decision Threshold</label>
-              <span id="thresholdVal" class="text-xs font-bold text-blue-600 font-mono">0.50</span>
+              <label for="sliderThreshold" class="text-xs font-semibold text-slate-700">Ambang Keputusan</label>
+              <span id="thresholdVal" class="text-xs font-bold text-rose-700 font-mono">0.50</span>
             </div>
-            <input id="sliderThreshold" type="range" min="0.40" max="0.85" step="0.01" value="0.50" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600">
+            <input id="sliderThreshold" type="range" min="0.40" max="0.85" step="0.01" value="0.50" aria-label="Slider Ambang Keputusan Risiko" class="w-full h-2 bg-slate-200 rounded appearance-none cursor-pointer accent-rose-700 focus:outline-none focus:ring-2 focus:ring-slate-900">
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- Executive KPI Row -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <!-- KPI 1 -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Test Orders Evaluated</span>
-          <span class="p-2 rounded-xl bg-blue-50 text-blue-600">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-          </span>
+    <!-- Executive Metric Cards (R-14, R-01, R-12) -->
+    <section aria-label="Ringkasan Metrik Kunci" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Primary Hero Metric: High-Risk Queue (Alert Color) -->
+      <div class="bg-white rounded-lg p-4 border-2 border-rose-200 bg-rose-50/20">
+        <div class="flex items-center justify-between text-xs font-bold text-rose-800 uppercase tracking-wider">
+          <span>Antrean Risiko Kritis</span>
+          <span class="w-2 h-2 rounded-full bg-rose-600 animate-pulse" aria-hidden="true"></span>
         </div>
-        <div class="mt-3">
+        <div class="mt-2.5">
+          <div id="kpiHighRisk" class="text-2xl font-extrabold text-rose-700 font-mono">3.257</div>
+          <div id="kpiHighRiskSub" class="text-xs text-slate-600 mt-1">Probabilitas risiko &gt;= 0,50</div>
+        </div>
+      </div>
+
+      <!-- Metric 2: Orders Evaluated -->
+      <div class="bg-white rounded-lg p-4 border border-slate-200">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Pesanan Uji Dievaluasi</span>
+        <div class="mt-2.5">
           <div class="text-2xl font-extrabold text-slate-900 font-mono">8.043</div>
-          <div class="text-xs text-slate-500 mt-1">Dari total <span class="font-semibold text-slate-700">62.897</span> pesanan nonbatal (Temporal Split)</div>
+          <div class="text-xs text-slate-500 mt-1">Dari 62.897 pesanan (Split Temporal)</div>
         </div>
       </div>
 
-      <!-- KPI 2 -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">High-Risk Queue</span>
-          <span class="p-2 rounded-xl bg-rose-50 text-rose-600">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-          </span>
-        </div>
-        <div class="mt-3">
-          <div id="kpiHighRisk" class="text-2xl font-extrabold text-rose-600 font-mono">3.257</div>
-          <div id="kpiHighRiskSub" class="text-xs text-slate-500 mt-1">Pesanan butuh intervensi armada prioritas</div>
+      <!-- Metric 3: Model Quality (AP) -->
+      <div class="bg-white rounded-lg p-4 border border-slate-200">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Average Precision (AP)</span>
+        <div class="mt-2.5">
+          <div class="text-2xl font-extrabold text-slate-900 font-mono">0,7364</div>
+          <div class="text-xs text-slate-600 mt-1 font-medium">Lift +16,0% terhadap Baseline (0,5764)</div>
         </div>
       </div>
 
-      <!-- KPI 3 -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Model Average Precision</span>
-          <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-          </span>
-        </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-emerald-600 font-mono">0,7364</div>
-          <div class="text-xs text-emerald-700 font-semibold mt-1 flex items-center gap-1">
-            <span>↑ +16,0% Lift</span>
-            <span class="text-slate-400 font-normal">vs Baseline 0,5764</span>
-          </div>
+      <!-- Metric 4: Graph Network Topology -->
+      <div class="bg-white rounded-lg p-4 border border-slate-200">
+        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Simpul Graf Bipartit</span>
+        <div class="mt-2.5">
+          <div class="text-2xl font-extrabold text-slate-900 font-mono">62.948</div>
+          <div class="text-xs text-slate-500 mt-1">152.676 Sisi • 19 Komponen Terhubung</div>
         </div>
       </div>
+    </section>
 
-      <!-- KPI 4 -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Graph Bipartite Network</span>
-          <span class="p-2 rounded-xl bg-purple-50 text-purple-600">
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
-          </span>
-        </div>
-        <div class="mt-3">
-          <div class="text-2xl font-extrabold text-purple-700 font-mono">62.948</div>
-          <div class="text-xs text-slate-500 mt-1">Simpul • <span class="font-semibold text-slate-700">152.676</span> Edges (19 Komponen)</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- INSIGHT 1: Machine Learning Risk Prioritization -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+    <!-- SECTION 1: Machine Learning Risk Prioritization (R-09, R-14) -->
+    <section aria-labelledby="section1Title" class="bg-white rounded-lg p-5 sm:p-6 border border-slate-200 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-200 gap-2">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">
-            INSIGHT 1 • MACHINE LEARNING
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mt-1">
-            Pemeringkatan Risiko Keterlambatan & Antrean Intervensi Operasional (Top-K Alert)
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Analisis 1 : Prediksi Pembelajaran Mesin</span>
+          <h3 id="section1Title" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">
+            Pemeringkatan Risiko Keterlambatan & Antrean Intervensi Operasional (Top-K)
           </h3>
-          <p class="text-xs text-slate-500">
-            Mengubah prediksi probabilitas PySpark MLlib (AP 0,7364) menjadi urutan kerja prioritas harian untuk mencegah penalti SLA.
+          <p class="text-xs text-slate-600 mt-0.5">
+            Konversi prediksi model PySpark MLlib menjadi daftar tindakan prioritas harian guna mencegah pinalti SLA.
           </p>
         </div>
-        <div class="text-xs text-right">
-          <span class="font-semibold text-slate-600">Model:</span> <span class="text-blue-600 font-mono font-bold">Spark MLlib Logistic Regression</span>
+        <div class="text-xs text-slate-500">
+          Model: <span class="font-mono font-semibold text-slate-800">Spark MLlib Logistic Regression</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- Distribution Histogram -->
-        <div class="lg:col-span-5 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <h4 class="text-xs font-bold text-slate-700 mb-2">Distribusi Skor Probabilitas Risiko Model</h4>
-          <div id="plotDistribution" style="height: 320px;"></div>
-          <div class="mt-2 text-[11px] text-slate-500 bg-white p-2.5 rounded-lg border border-slate-200 leading-relaxed">
-            <strong class="text-slate-700">Interpretasi Teknis:</strong> Model menghasilkan konsentrasi skor di atas 0,45. Nilai ambang (garis merah putus-putus) membedakan pesanan darurat yang wajib dialokasikan armada ekspres.
+        <div class="lg:col-span-5 bg-slate-50 p-4 rounded-md border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-2">Distribusi Probabilitas Risiko Model</h4>
+          <div id="plotDistribution" style="height: 310px;" aria-label="Grafik Distribusi Skor Risiko"></div>
+          <div class="mt-2 text-[11px] text-slate-600 bg-white p-2.5 rounded border border-slate-200 leading-relaxed">
+            <strong class="text-slate-800">Catatan Operasional:</strong> Garis putus-putus merah menandakan batas ambang keputusan. Pesanan di sisi kanan garis dialokasikan ke armada ekspres prioritas.
           </div>
         </div>
 
-        <!-- Priority Queue Table -->
+        <!-- Priority Table -->
         <div class="lg:col-span-7 flex flex-col justify-between">
           <div>
             <div class="flex items-center justify-between mb-2">
-              <h4 class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
-                <span>Daftar Antrean Pesanan Berisiko Kritis (Live Dispatch Queue)</span>
-                <span id="queueCountBadge" class="bg-rose-100 text-rose-800 text-[11px] font-bold px-2 py-0.5 rounded-full">Top List</span>
-              </h4>
-              <div class="relative w-48">
-                <input id="searchOrder" type="text" placeholder="Cari Order ID / Kategori..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded-lg px-2.5 py-1.5 text-slate-700 focus:outline-none focus:ring-1 focus:ring-blue-500">
+              <div class="flex items-center gap-2">
+                <h4 class="text-xs font-bold text-slate-800">Antrean Pesanan Berisiko Kritis</h4>
+                <span id="queueCountBadge" class="bg-slate-100 text-slate-700 text-[11px] font-semibold px-2 py-0.5 rounded">
+                  Memuat...
+                </span>
+              </div>
+              <div class="relative w-52">
+                <label for="searchOrder" class="sr-only">Cari Order ID atau Kategori Produk</label>
+                <input id="searchOrder" type="text" placeholder="Cari Order ID / Kategori..." class="w-full text-xs bg-slate-50 border border-slate-300 rounded px-2.5 py-1.5 text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:ring-offset-2">
               </div>
             </div>
 
-            <!-- Table Container -->
-            <div class="overflow-x-auto border border-slate-200 rounded-xl custom-scrollbar" style="max-height: 290px;">
+            <!-- Table Container (R-39) -->
+            <div class="overflow-x-auto border border-slate-200 rounded custom-scrollbar" style="max-height: 275px;">
               <table class="w-full text-left text-xs">
-                <thead class="bg-slate-100 text-slate-600 sticky top-0 text-[11px] uppercase font-bold border-b border-slate-200">
+                <caption class="sr-only">Daftar Antrean Pesanan Berisiko Keterlambatan Tinggi</caption>
+                <thead class="bg-slate-100 text-slate-700 sticky top-0 text-[11px] uppercase font-bold border-b border-slate-200">
                   <tr>
-                    <th class="py-2.5 px-3">Order ID</th>
-                    <th class="py-2.5 px-3">Mode Kirim</th>
-                    <th class="py-2.5 px-3">Jadwal</th>
-                    <th class="py-2.5 px-3">Skor Risiko</th>
-                    <th class="py-2.5 px-3">Kategori Produk</th>
-                    <th class="py-2.5 px-3">Rekomendasi Tindakan</th>
+                    <th scope="col" class="py-2 px-3">Order ID</th>
+                    <th scope="col" class="py-2 px-3">Moda Kirim</th>
+                    <th scope="col" class="py-2 px-3">Jadwal</th>
+                    <th scope="col" class="py-2 px-3">Skor Risiko</th>
+                    <th scope="col" class="py-2 px-3">Kategori Produk</th>
+                    <th scope="col" class="py-2 px-3">Rekomendasi Aksi</th>
                   </tr>
                 </thead>
                 <tbody id="orderTableBody" class="divide-y divide-slate-100 font-medium text-slate-700">
@@ -229,415 +237,132 @@
             </div>
           </div>
 
-          <!-- Business Value Card -->
-          <div class="mt-4 p-3 bg-blue-50/70 border border-blue-200 rounded-xl text-xs text-blue-900 leading-relaxed flex items-start gap-2.5">
-            <svg class="w-5 h-5 text-blue-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            <div>
-              <strong class="font-bold">Dampak Bisnis Langsung:</strong> Alih-alih memeriksa seluruh pesanan secara manual, manajer logistik dapat langsung mengekspor 200 pesanan teratas dari antrean ini setiap pagi untuk diberikan perlakuan *fast-track picking* dan armada ekspres khusus, mencegah potensi denda penalti keterlambatan hingga <span class="font-bold text-blue-800">78,9%</span> pada kohort darurat.
-            </div>
+          <!-- Strategic Impact Note (R-02) -->
+          <div class="mt-3 p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700 leading-relaxed">
+            <strong class="font-bold text-slate-900">Dampak Bisnis:</strong> Manajer logistik dapat langsung mengekspor antrean 200 pesanan teratas setiap pagi untuk proses <em>fast-track picking</em>, mencegah potensi denda keterlambatan hingga 78,9% pada kelompok berisiko tinggi.
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- INSIGHT 2: Graph Analytics & Network Bottlenecks -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+    <!-- SECTION 2: Graph Analytics & Warehouse Slotting (R-09, R-01) -->
+    <section aria-labelledby="section2Title" class="bg-white rounded-lg p-5 sm:p-6 border border-slate-200 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-200 gap-2">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
-            INSIGHT 2 • GRAPH ANALYTICS
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mt-1">
-            Topologi Hub Kategori & Titik Penumpukan Beban Gudang (Warehouse Slotting)
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Analisis 2 : Analitika Graf Jaringan</span>
+          <h3 id="section2Title" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">
+            Topologi Hub Kategori & Penataan Ruang Gudang (Warehouse Slotting)
           </h3>
-          <p class="text-xs text-slate-500">
-            Menyingkap pola ko-keanggotaan belanja produk melalui graf bipartit (62.948 simpul) untuk optimasi tata letak logistik.
+          <p class="text-xs text-slate-600 mt-0.5">
+            Pola pemesanan lintas kategori produk dalam graf bipartit (62.948 simpul) guna optimasi pergerakan staf gudang.
           </p>
         </div>
-        <div class="text-xs text-right">
-          <span class="font-semibold text-slate-600">Model:</span> <span class="text-purple-700 font-mono font-bold">NetworkX Bipartite (Order ↔ Category)</span>
+        <div class="text-xs text-slate-500">
+          Model: <span class="font-mono font-semibold text-slate-800">NetworkX Bipartite Analysis</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- Graph Bar Chart -->
-        <div class="lg:col-span-7 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <h4 class="text-xs font-bold text-slate-700 mb-2">10 Kategori Produk dengan Derajat Hubungan (Degree) Tertinggi</h4>
-          <div id="plotGraphHubs" style="height: 330px;"></div>
+        <div class="lg:col-span-7 bg-slate-50 p-4 rounded-md border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-2">Kategori Produk dengan Derajat Koneksi (Degree) Tertinggi</h4>
+          <div id="plotGraphHubs" style="height: 310px;" aria-label="Grafik Derajat Hubungan Kategori Produk"></div>
         </div>
 
-        <!-- Slotting Strategy Card -->
-        <div class="lg:col-span-5 flex flex-col justify-between space-y-4">
-          <div class="bg-purple-50/60 border border-purple-200 p-4 rounded-xl">
-            <h4 class="text-xs font-bold text-purple-900 uppercase tracking-wide flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
-              Temuan Kritis Bottleneck Jaringan
+        <!-- Strategy Column -->
+        <div class="lg:col-span-5 flex flex-col justify-between space-y-3">
+          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">
+              Temuan Hambatan Topologis
             </h4>
-            <div class="mt-2.5 space-y-2 text-xs text-purple-950 leading-relaxed">
+            <div class="mt-2 space-y-1.5 text-xs text-slate-700 leading-relaxed">
               <p>
-                • <strong>Tiga Kategori Hub Raksasa:</strong> Kategori <span class="font-bold text-purple-800">17 (Cleats: 19.534 pesanan)</span>, <span class="font-bold text-purple-800">18 (Men's Footwear: 17.954 pesanan)</span>, dan <span class="font-bold text-purple-800">24 (Women's Apparel: 17.088 pesanan)</span> memiliki keterhubungan tertinggi di dalam <em>Giant Component</em>.
+                • <strong>Tiga Hub Terbesar:</strong> Kategori 17 (Cleats: 19.534 pesanan), 18 (Men's Footwear: 17.954 pesanan), dan 24 (Women's Apparel: 17.088 pesanan) mendominasi komponen raksasa (*Giant Component*).
               </p>
               <p>
-                • <strong>Karakteristik Keterlambatan:</strong> Ketiga kategori ini secara konsisten mencatatkan tingkat keterlambatan di atas <span class="font-bold text-purple-800">57,6%</span> dan paling sering dipesan bersamaan dalam satu pesanan gabungan.
-              </p>
-              <p>
-                • <strong>Akar Masalah Fisik:</strong> Kurir dan staf gudang menghabiskan waktu perpindahan (*travel time*) paling lama saat mengumpulkan barang dari ketiga kategori ini di rak yang berjauhan.
+                • <strong>Rasio Keterlambatan:</strong> Ketiga kategori memiliki tingkat keterlambatan di atas 57,6% dan paling sering dibeli secara bersamaan.
               </p>
             </div>
           </div>
 
-          <!-- Actionable Warehouse Strategy -->
-          <div class="bg-emerald-50/70 border border-emerald-200 p-4 rounded-xl">
-            <h4 class="text-xs font-bold text-emerald-900 uppercase tracking-wide flex items-center gap-1.5">
-              <svg class="w-4 h-4 text-emerald-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-              Rekomendasi Tindakan: Warehouse Reslotting
+          <div class="bg-slate-50 border border-slate-200 p-3.5 rounded">
+            <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wide">
+              Rekomendasi Kebijakan Tata Letak (Reslotting)
             </h4>
-            <p class="mt-2 text-xs text-emerald-950 leading-relaxed">
-              Tempatkan stok Kategori 17, 18, dan 24 pada zona rak yang saling berdampingan di area <em>Fast-Moving Staging Zone</em> dekat meja pengepakan (*packing table*). Langkah ini mengurangi waktu penyiapan barang (*picking cycle time*) hingga <span class="font-bold text-emerald-800">30%</span> pada pesanan multikategori.
+            <p class="mt-1.5 text-xs text-slate-700 leading-relaxed">
+              Tempatkan stok Kategori 17, 18, dan 24 pada lorong yang saling berdekatan di area penyiapan cepat (*Fast-Moving Staging Zone*). Penataan ini memangkas waktu penyiapan barang hingga 30% pada pesanan gabungan.
             </p>
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
-    <!-- INSIGHT 3: Business Strategy & Shipping Mode Calibration -->
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 space-y-5">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-2">
+    <!-- SECTION 3: Shipping Mode Calibration & Business Policy (R-09, R-02) -->
+    <section aria-labelledby="section3Title" class="bg-white rounded-lg p-5 sm:p-6 border border-slate-200 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-slate-200 gap-2">
         <div>
-          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">
-            INSIGHT 3 • BUSINESS & OPERATIONS
-          </div>
-          <h3 class="text-lg font-bold text-slate-900 mt-1">
-            Kalibrasi Janji Jadwal Layanan Pengiriman (SLA Realistis)
+          <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block">Analisis 3 : Strategi Bisnis & Kebijakan SLA</span>
+          <h3 id="section3Title" class="text-base sm:text-lg font-bold text-slate-900 mt-0.5">
+            Kalibrasi Janji Layanan Pengiriman (SLA Realistis)
           </h3>
-          <p class="text-xs text-slate-500">
-            Mengurai paradoks operasional antara durasi janji pemasaran (*scheduled days*) dengan kemampuan riil pemenuhan logistik.
+          <p class="text-xs text-slate-600 mt-0.5">
+            Mengurai kesenjangan antara janji durasi pengiriman pemasaran dengan realitas pemenuhan logistik.
           </p>
         </div>
-        <div class="text-xs text-right">
-          <span class="font-semibold text-slate-600">Fokus:</span> <span class="text-amber-700 font-mono font-bold">Shipping Mode & SLA Trade-off</span>
+        <div class="text-xs text-slate-500">
+          Evaluasi: <span class="font-mono font-semibold text-slate-800">Trade-off Shipping Mode & SLA</span>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
         <!-- Shipping Mode Breakdown Chart -->
-        <div class="lg:col-span-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
-          <h4 class="text-xs font-bold text-slate-700 mb-2">Tingkat Risiko & Durasi Janji per Moda Pengiriman</h4>
-          <div id="plotShippingMode" style="height: 310px;"></div>
+        <div class="lg:col-span-6 bg-slate-50 p-4 rounded-md border border-slate-200">
+          <h4 class="text-xs font-bold text-slate-800 mb-2">Tingkat Risiko & Durasi Janji per Moda Pengiriman</h4>
+          <div id="plotShippingMode" style="height: 300px;" aria-label="Grafik Perbandingan Moda Pengiriman"></div>
         </div>
 
-        <!-- Business Strategy Matrix -->
+        <!-- Strategy Details (R-02) -->
         <div class="lg:col-span-6 flex flex-col justify-between space-y-3">
-          <div class="bg-white p-4 rounded-xl border border-slate-200 space-y-2.5 text-xs text-slate-700">
-            <h4 class="font-bold text-slate-900 text-sm">Temuan Paradoks Operasional Pengiriman</h4>
-            <div class="grid grid-cols-2 gap-2.5 text-center mt-2">
-              <div class="p-3 bg-rose-50 rounded-lg border border-rose-100">
-                <span class="block text-rose-600 font-bold text-sm">Same Day & First Class</span>
-                <span class="block text-slate-600 mt-1 text-[11px]">Rata-rata Skor Risiko: <strong class="text-rose-700 font-mono">0,79 – 0,86</strong></span>
-                <span class="block text-slate-500 text-[10px]">Durasi Janji: 0 – 1 Hari</span>
+          <div class="bg-white p-3.5 rounded border border-slate-200 space-y-2 text-xs text-slate-700">
+            <h4 class="font-bold text-slate-900">Paradoks Janji Pengiriman Cepat</h4>
+            <div class="grid grid-cols-2 gap-2 text-center mt-1.5">
+              <div class="p-2.5 bg-rose-50 border border-rose-100 rounded">
+                <span class="block text-rose-700 font-bold text-xs">Same Day & First Class</span>
+                <span class="block text-slate-600 text-[11px] mt-0.5">Risiko: <strong class="font-mono text-rose-700">0,79 hingga 0,86</strong></span>
+                <span class="block text-slate-500 text-[10px]">Janji: 0 sampai 1 Hari</span>
               </div>
-              <div class="p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-                <span class="block text-emerald-700 font-bold text-sm">Standard Class</span>
-                <span class="block text-slate-600 mt-1 text-[11px]">Rata-rata Skor Risiko: <strong class="text-emerald-700 font-mono">0,45</strong></span>
-                <span class="block text-slate-500 text-[10px]">Durasi Janji: 4 Hari</span>
+              <div class="p-2.5 bg-slate-50 border border-slate-200 rounded">
+                <span class="block text-slate-800 font-bold text-xs">Standard Class</span>
+                <span class="block text-slate-600 text-[11px] mt-0.5">Risiko: <strong class="font-mono text-slate-800">0,45</strong></span>
+                <span class="block text-slate-500 text-[10px]">Janji: 4 Hari</span>
               </div>
             </div>
-            <p class="leading-relaxed text-slate-600 text-[11.5px] pt-1">
-              Data empiris membuktikan bahwa semakin agresif janji pemasaran (Same Day atau 1 hari), semakin tinggi kegagalan logistik memenuhi SLA. Hal ini bukan semata-mata karena kurir lambat, melainkan karena batas janji pengiriman yang terlalu ketat tidak memperhitungkan variabilitas proses pemrosesan pesanan.
+            <p class="leading-relaxed text-slate-600 text-[11px] pt-1">
+              Data empiris menunjukkan bahwa janji pemasaran yang terlalu ketat (0 hingga 1 hari) tidak memperhitungkan variasi pemrosesan di gudang, menjadi pemicu utama kegagalan SLA.
             </p>
           </div>
 
-          <!-- Strategic SLA Revision Recommendation -->
-          <div class="p-3.5 bg-amber-50/80 border border-amber-200 rounded-xl text-xs text-amber-950 leading-relaxed">
-            <strong class="font-bold text-amber-900 flex items-center gap-1 mb-1">
-              <svg class="w-4 h-4 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-              Rekomendasi Kebijakan Bisnis:
-            </strong>
-            Lakukan renegosiasi SLA pemasaran untuk layanan <em>Same Day</em> dan <em>First Class</em> dengan menambahkan batas waktu pesanan (*cutoff time*) yang lebih tegas (misal: pesanan setelah pukul 11:00 otomatis berstatus H+1), atau menambahkan toleransi waktu +1 hari untuk wilayah di luar hub logistik utama. Kebijakan ini dapat memangkas kompensasi denda pelanggan tanpa mengurangi volume penjualan.
+          <div class="p-3 bg-slate-50 border border-slate-200 rounded text-xs text-slate-700 leading-relaxed">
+            <strong class="font-bold text-slate-900 block mb-1">Rekomendasi Penyesuaian Kebijakan:</strong>
+            Terapkan batas waktu pemesanan (*cutoff time*) yang lebih tegas untuk layanan Same Day (misalnya pesanan setelah pukul 11:00 otomatis diproses H+1) atau berikan toleransi +1 hari untuk pengiriman di luar hub utama.
           </div>
         </div>
       </div>
-    </div>
+    </section>
 
   </main>
 
-  <!-- Footer -->
-  <footer class="bg-slate-900 text-slate-400 py-6 border-t border-slate-800 text-xs mt-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p>© 2026 Rafael Yudianto (NIM: 2702752495) • Magister Teknik Informatika, BINUS Graduate Program.</p>
-      <p class="text-slate-400">COMP8035041 Big Data Analytics • Final Project Submission</p>
+  <!-- Clean Footer (R-02, R-25) -->
+  <footer class="bg-slate-900 text-slate-400 py-4 border-t border-slate-800 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p>© 2026 Rafael Yudianto (NIM: 2702752495), Magister Teknik Informatika BINUS Graduate Program.</p>
+      <p class="text-slate-400">COMP8035041 Big Data Analytics: Assignment II Submission</p>
     </div>
   </footer>
 
-  <!-- Load Data and Chart Logic -->
+  <!-- Scripts: Modularized Architecture (R-31) -->
   <script src="data.js"></script>
-  <script>
-    // State
-    let currentThreshold = 0.50;
-    let selectedMarket = "ALL";
-    let selectedShippingMode = "ALL";
-    let searchQuery = "";
-
-    // DOM Elements
-    const sliderThreshold = document.getElementById('sliderThreshold');
-    const thresholdVal = document.getElementById('thresholdVal');
-    const filterMarket = document.getElementById('filterMarket');
-    const filterShippingMode = document.getElementById('filterShippingMode');
-    const searchOrder = document.getElementById('searchOrder');
-    const kpiHighRisk = document.getElementById('kpiHighRisk');
-    const orderTableBody = document.getElementById('orderTableBody');
-
-    // Initialize Event Listeners
-    sliderThreshold.addEventListener('input', (e) => {
-      currentThreshold = parseFloat(e.target.value);
-      thresholdVal.textContent = currentThreshold.toFixed(2);
-      renderAll();
-    });
-
-    filterMarket.addEventListener('change', (e) => {
-      selectedMarket = e.target.value;
-      renderAll();
-    });
-
-    filterShippingMode.addEventListener('change', (e) => {
-      selectedShippingMode = e.target.value;
-      renderAll();
-    });
-
-    searchOrder.addEventListener('input', (e) => {
-      searchQuery = e.target.value.toLowerCase();
-      renderTable();
-    });
-
-    function getFilteredOrders() {
-      return DASHBOARD_DATA.orders.filter(item => {
-        const matchMarket = (selectedMarket === "ALL" || item.market === selectedMarket);
-        const matchSM = (selectedShippingMode === "ALL" || item.shipping_mode === selectedShippingMode);
-        const matchSearch = (!searchQuery || 
-          item.order_id.toString().includes(searchQuery) || 
-          item.categories.toLowerCase().includes(searchQuery) ||
-          item.shipping_mode.toLowerCase().includes(searchQuery)
-        );
-        return matchMarket && matchSM && matchSearch;
-      });
-    }
-
-    function renderKPIs() {
-      // Calculate high risk orders count based on threshold from full histogram
-      let totalHighRisk = 0;
-      DASHBOARD_DATA.histogram.forEach(b => {
-        if (b.mid >= currentThreshold) {
-          totalHighRisk += b.count;
-        }
-      });
-      const pct = ((totalHighRisk / DASHBOARD_DATA.kpi.total_test_orders) * 100).toFixed(1);
-      kpiHighRisk.textContent = `${totalHighRisk.toLocaleString('id-ID')} (${pct}%)`;
-    }
-
-    function renderDistributionPlot() {
-      const x = DASHBOARD_DATA.histogram.map(d => d.mid);
-      const y = DASHBOARD_DATA.histogram.map(d => d.count);
-      const colors = x.map(val => val >= currentThreshold ? '#e11d48' : '#2563eb');
-
-      const trace = {
-        x: x,
-        y: y,
-        type: 'bar',
-        marker: { color: colors, opacity: 0.85 },
-        hovertemplate: 'Skor Risiko: %{x:.2f}<br>Jumlah Pesanan: %{y:,}<extra></extra>'
-      };
-
-      const layout = {
-        margin: { l: 40, r: 15, t: 15, b: 35 },
-        paper_bgcolor: 'transparent',
-        plot_bgcolor: 'transparent',
-        xaxis: { 
-          title: { text: 'Probabilitas Risiko Model (Spark MLlib)', font: { size: 10 } },
-          tickfont: { size: 9 },
-          gridcolor: '#e2e8f0'
-        },
-        yaxis: { 
-          title: { text: 'Frekuensi Pesanan', font: { size: 10 } },
-          tickfont: { size: 9 },
-          gridcolor: '#e2e8f0'
-        },
-        shapes: [{
-          type: 'line',
-          x0: currentThreshold,
-          x1: currentThreshold,
-          y0: 0,
-          y1: Math.max(...y) * 1.05,
-          line: { color: '#dc2626', width: 2, dash: 'dash' }
-        }],
-        annotations: [{
-          x: currentThreshold,
-          y: Math.max(...y),
-          xref: 'x',
-          yref: 'y',
-          text: `Threshold: ${currentThreshold.toFixed(2)}`,
-          showarrow: true,
-          arrowhead: 2,
-          arrowcolor: '#dc2626',
-          font: { size: 10, color: '#dc2626', weight: 'bold' }
-        }]
-      };
-
-      Plotly.newPlot('plotDistribution', [trace], layout, { responsive: true, displayModeBar: false });
-    }
-
-    function renderTable() {
-      const filtered = getFilteredOrders();
-      orderTableBody.innerHTML = '';
-
-      if (filtered.length === 0) {
-        orderTableBody.innerHTML = `<tr><td colspan="6" class="text-center py-6 text-slate-400">Tidak ada pesanan yang sesuai filter.</td></tr>`;
-        return;
-      }
-
-      filtered.slice(0, 30).forEach(order => {
-        const isCritical = order.risk_prob >= currentThreshold;
-        const row = document.createElement('tr');
-        row.className = isCritical ? 'bg-rose-50/40 hover:bg-rose-50 transition' : 'hover:bg-slate-50 transition';
-
-        const badgeClass = order.risk_prob >= 0.75 
-          ? 'bg-rose-100 text-rose-800 border-rose-200' 
-          : (order.risk_prob >= 0.50 ? 'bg-amber-100 text-amber-800 border-amber-200' : 'bg-slate-100 text-slate-700 border-slate-200');
-
-        row.innerHTML = `
-          <td class="py-2 px-3 font-mono font-bold text-slate-900">${order.order_id}</td>
-          <td class="py-2 px-3">${order.shipping_mode}</td>
-          <td class="py-2 px-3 font-mono">${order.scheduled_days} hari</td>
-          <td class="py-2 px-3 font-mono font-bold ${order.risk_prob >= 0.70 ? 'text-rose-600' : 'text-slate-800'}">${(order.risk_prob).toFixed(4)}</td>
-          <td class="py-2 px-3 text-slate-600 truncate max-w-[140px]" title="${order.categories}">${order.categories}</td>
-          <td class="py-2 px-3">
-            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border ${badgeClass}">
-              ${order.action}
-            </span>
-          </td>
-        `;
-        orderTableBody.appendChild(row);
-      });
-    }
-
-    function renderGraphHubsPlot() {
-      const topCats = DASHBOARD_DATA.top_categories_graph.slice(0, 8);
-      const names = topCats.map(c => `${c.id} - ${c.name}`);
-      const degrees = topCats.map(c => c.degree);
-      const lateRates = topCats.map(c => (c.late_rate * 100).toFixed(1));
-
-      const traceDegrees = {
-        x: names,
-        y: degrees,
-        name: 'Order Degree (Koneksi)',
-        type: 'bar',
-        marker: { color: '#7c3aed' },
-        hovertemplate: '%{x}<br>Total Pesanan: %{y:,}<extra></extra>'
-      };
-
-      const traceLateRate = {
-        x: names,
-        y: lateRates,
-        name: '% Keterlambatan',
-        type: 'scatter',
-        mode: 'lines+markers',
-        yaxis: 'y2',
-        marker: { color: '#e11d48', size: 8 },
-        line: { color: '#e11d48', width: 2 },
-        hovertemplate: '%{x}<br>Tingkat Terlambat: %{y}%<extra></extra>'
-      };
-
-      const layout = {
-        margin: { l: 50, r: 50, t: 15, b: 85 },
-        paper_bgcolor: 'transparent',
-        plot_bgcolor: 'transparent',
-        showlegend: true,
-        legend: { orientation: 'h', x: 0.1, y: 1.15, font: { size: 10 } },
-        xaxis: { 
-          tickangle: -30,
-          tickfont: { size: 9 },
-          gridcolor: '#e2e8f0'
-        },
-        yaxis: { 
-          title: { text: 'Degree (Pesanan Unik)', font: { size: 10, color: '#7c3aed' } },
-          tickfont: { size: 9 },
-          gridcolor: '#e2e8f0'
-        },
-        yaxis2: {
-          title: { text: 'Tingkat Keterlambatan (%)', font: { size: 10, color: '#e11d48' } },
-          tickfont: { size: 9 },
-          overlaying: 'y',
-          side: 'right',
-          range: [40, 75]
-        }
-      };
-
-      Plotly.newPlot('plotGraphHubs', [traceDegrees, traceLateRate], layout, { responsive: true, displayModeBar: false });
-    }
-
-    function renderShippingModePlot() {
-      const sm = DASHBOARD_DATA.shipping_modes;
-      const modes = sm.map(s => s['Shipping Mode']);
-      const avgProb = sm.map(s => (s.avg_prob * 100).toFixed(1));
-      const scheduledDays = sm.map(s => s.avg_scheduled_days);
-
-      const traceProb = {
-        x: modes,
-        y: avgProb,
-        name: 'Rata-rata Skor Risiko (%)',
-        type: 'bar',
-        marker: { color: '#f59e0b' },
-        hovertemplate: '%{x}<br>Skor Risiko: %{y}%<extra></extra>'
-      };
-
-      const traceDays = {
-        x: modes,
-        y: scheduledDays,
-        name: 'Durasi Terjadwal (Hari)',
-        type: 'scatter',
-        mode: 'lines+markers',
-        yaxis: 'y2',
-        marker: { color: '#0284c7', size: 8 },
-        line: { color: '#0284c7', width: 2 },
-        hovertemplate: '%{x}<br>Jadwal Janji: %{y} hari<extra></extra>'
-      };
-
-      const layout = {
-        margin: { l: 45, r: 45, t: 15, b: 35 },
-        paper_bgcolor: 'transparent',
-        plot_bgcolor: 'transparent',
-        showlegend: true,
-        legend: { orientation: 'h', x: 0.1, y: 1.15, font: { size: 10 } },
-        xaxis: { tickfont: { size: 10 }, gridcolor: '#e2e8f0' },
-        yaxis: { 
-          title: { text: 'Skor Risiko (%)', font: { size: 10, color: '#f59e0b' } },
-          tickfont: { size: 9 },
-          range: [0, 100],
-          gridcolor: '#e2e8f0'
-        },
-        yaxis2: {
-          title: { text: 'Durasi Janji (Hari)', font: { size: 10, color: '#0284c7' } },
-          tickfont: { size: 9 },
-          overlaying: 'y',
-          side: 'right',
-          range: [0, 5]
-        }
-      };
-
-      Plotly.newPlot('plotShippingMode', [traceProb, traceDays], layout, { responsive: true, displayModeBar: false });
-    }
-
-    function renderAll() {
-      renderKPIs();
-      renderDistributionPlot();
-      renderTable();
-      renderGraphHubsPlot();
-      renderShippingModePlot();
-    }
-
-    // Initial Execution
-    document.addEventListener('DOMContentLoaded', () => {
-      renderAll();
-    });
-  </script>
+  <script src="js/charts.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
